@@ -1,0 +1,71 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks:
+# Run show mac address-table and register results #
+    - name: show mac address-table 
+      ios_command:
+        commands:
+          - show mac address-table
+      register: mac_table_raw
+
+# Genie parse command #
+    - name: Set Fact Genie Filter - show mac address-table
+      set_fact:
+        pyats_mac_table: "{{ mac_table_raw.stdout[0] | parse_genie(command='show mac address-table', os='iosxe', platform='cat6k') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_mac_table | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_MAC.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_mac_table | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_MAC.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_MAC.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost    
+
+# Create CSV and MD File #
+# Create MAC CSV and MD file with results #
+    - name: CSV and MD using Jinja templates
+      template:
+        src: ../templates/ios/MACFacts.j2
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_MAC.{{ item }}
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_MAC.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_MAC.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true

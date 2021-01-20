@@ -1,0 +1,26 @@
+{
+    "global_static_table": {
+        "x.x.x.x": {
+            "age": "",
+            "encap_type": "",
+            "ip_address": "x.x.x.x",
+            "mac_address": "",
+            "protocol": ""
+        }
+    },
+    "interfaces": {
+        "Port-channelx": {
+            "ipv4": {
+                "neighbors": {
+                    "y.y.y.y": {
+                        "age": "",
+                        "ip": "y.y.y.y",
+                        "link_layer_address": "",
+                        "origin": "",
+                        "protocol": "",
+                        "type": ""
+                    }
+            }
+        }
+    }
+}

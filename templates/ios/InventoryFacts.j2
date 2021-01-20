@@ -1,0 +1,14 @@
+{% if item == "csv" %}
+Name,Description,PID,Serial Number,Virtual ID
+{%     for part in pyats_inventory['index'] %}
+{% if pyats_inventory['index'][part]['name'] is defined %}{{ pyats_inventory['index'][part]['name'] }}{% else %}No Name {% endif %},{% if pyats_inventory['index'][part]['descr'] is defined %}{{ pyats_inventory['index'][part]['descr'] | regex_replace("Systems,","Systems") | regex_replace("supply,","supply")}}{% else %}No Description{% endif %},{% if pyats_inventory['index'][part]['pid'] is defined %}{{ pyats_inventory['index'][part]['pid'] }}{% else %}No PID{% endif %},{% if pyats_inventory['index'][part]['sn'] is defined %}{{ pyats_inventory['index'][part]['sn'] }}{% else %}No Serial Number{% endif %},{% if pyats_inventory['index'][part]['vid'] is defined %}{{ pyats_inventory['index'][part]['vid'] }}{% else %}N/A{% endif %}
+
+{%     endfor %}
+{% else %}
+# Cisco Inventory Facts for {{ inventory_hostname }}
+| Name | Description | PID | Serial Number | Virtual ID |
+| ---- | ----------- | --- | ------------- | ---------- |
+{%     for part in pyats_inventory['index'] %}
+| {% if pyats_inventory['index'][part]['name'] is defined %}{{ pyats_inventory['index'][part]['name'] }}{% else %}No Name {% endif %} | {% if pyats_inventory['index'][part]['descr'] is defined %}{{ pyats_inventory['index'][part]['descr'] }}{% else %}No Description{% endif %} | {% if pyats_inventory['index'][part]['pid'] is defined %}{{ pyats_inventory['index'][part]['pid'] }}{% else %}No PID{% endif %} | {% if pyats_inventory['index'][part]['sn'] is defined %}{{ pyats_inventory['index'][part]['sn'] }}{% else %}No Serial Number{% endif %} | {% if pyats_inventory['index'][part]['vid'] is defined %}{{ pyats_inventory['index'][part]['vid'] }}{% else %}N/A{% endif %} |
+{%     endfor %}
+{% endif %}

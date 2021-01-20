@@ -1,0 +1,70 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true    
+  tasks:
+# Run Show inventory and register results #
+    - name: show inventory 
+      ios_command:
+        commands:
+          - show inventory
+      register: inventory_raw
+
+# Genie Parse command #
+    - name: Set Fact Genie Filter - show inventory
+      set_fact:
+        pyats_inventory: "{{ inventory_raw.stdout[0] | parse_genie(command='show inventory', os='ios', platform='cat6k') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_inventory | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Inventory.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_inventory | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Inventory.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_Inventory.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost    
+
+# Create CSV file with results #
+    - name: Create CSV and Markdown
+      template:
+        src: ../templates/ios/InventoryFacts.j2
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Inventory.{{ item }}       
+      loop: 
+        - csv
+        - md      
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_Inventory.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_Inventory.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true

@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Interface,Neighbor,Neighbor Port
+{%     for key, value in ansible_facts.net_neighbors.items() %}
+{{ key }},{{ value[0].host }},{{ value[0].port }}
+{%     endfor %}
+{% else %}
+# Interface Facts for {{ inventory_hostname }}
+| Interface | Neighbor | Neighbor Port |
+| --------- | -------- | ------------- |
+{%     for key, value in ansible_facts.net_neighbors.items() %}
+| {{ key }} | {{ value[0].host }} | {{ value[0].port }} |
+{%     endfor %}
+{% endif %}

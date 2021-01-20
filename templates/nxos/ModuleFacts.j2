@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Model,Ports,Status,Type
+{%     for module in ansible_facts.net_module %}
+{{ module.model }},{{ module.ports }},{{ module.status }},{{ module.type }}
+{%     endfor %}
+{% else %}
+# Modules for {{ inventory_hostname }}
+| Model | Ports | Status | Type |
+| ----- | ----- | ------ | ---- |
+{%     for module in ansible_facts.net_module %}
+| {{ module.model }} | {{ module.ports }} | {{ module.status }} | {{ module.type }} |
+{%     endfor %}
+{% endif %}

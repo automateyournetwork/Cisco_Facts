@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Interface,Description,State,Subnet Mask,IP Address,Bandwidth,MAC Address,Type,MTU
+{%     for interface in ansible_facts.net_interfaces %}
+{{ interface }},{% if ansible_facts.net_interfaces[interface].description is defined %}{{ ansible_facts.net_interfaces[interface].description }} {% else %}No Description {% endif %},{{ ansible_facts.net_interfaces[interface].state }},{% if ansible_facts.net_interfaces[interface].ipv4 is defined %} {{ ansible_facts.net_interfaces[interface].ipv4 | regex_replace("\{'masklen':", "") | regex_replace("'address': ", "") | regex_replace("\}", "") | regex_replace("'", "") }} {% else %} NA,NA {% endif %},{{ ansible_facts.net_interfaces[interface].bandwidth }},{{ ansible_facts.net_interfaces[interface].macaddress }},{{ ansible_facts.net_interfaces[interface].type }},{{ ansible_facts.net_interfaces[interface].mtu }}
+{%     endfor %}
+{% else %}
+# Interfaces for {{ inventory_hostname }}
+| Interface | Description | State | Subnet Mask | IP Address | Bandwidth | MAC Address | Type | MTU |
+| --------- | ----------- | ----- | ----------- | ---------- | --------- | ----------- | ---- | --- |
+{%     for interface in ansible_facts.net_interfaces %}
+| {{ interface }} | {% if ansible_facts.net_interfaces[interface].description is defined %}{{ ansible_facts.net_interfaces[interface].description }} {% else %}No Description {% endif %} | {{ ansible_facts.net_interfaces[interface].state }} | {% if ansible_facts.net_interfaces[interface].ipv4 is defined %} {{ ansible_facts.net_interfaces[interface].ipv4 | regex_replace("\{'masklen':", "") | regex_replace("'address': ", "") | regex_replace("\}", "") | regex_replace("'", "") | regex_replace(",", " | ") }} {% else %} NA | NA {% endif %} | {{ ansible_facts.net_interfaces[interface].bandwidth }} | {{ ansible_facts.net_interfaces[interface].macaddress }} | {{ ansible_facts.net_interfaces[interface].type }} | {{ ansible_facts.net_interfaces[interface].mtu }} |
+{%     endfor %}
+{% endif %}

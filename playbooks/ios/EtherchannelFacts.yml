@@ -1,0 +1,88 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks: 
+# Gather Ansible Facts About Core Etherchannels VRFs #
+    - name: show etherchannel summary
+      ios_command:
+        commands:
+          - show etherchannel summary
+      register: etherchannel_summary_raw
+
+# Genie parse command #
+    - name: Set Fact Genie Filter 
+      set_fact:
+        pyats_etherchannel_summary: "{{ etherchannel_summary_raw['stdout'][0] | parse_genie(command='show etherchannel summary', os='ios') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_etherchannel_summary | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Summary.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_etherchannel_summary | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Summary.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Summary.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Create CSV and Markdown Files #
+# Create Etherchannel CSV and Markdown files with summary totals results #
+    - name: Create CSV and Markdown for EtherChannel Totals
+      template: 
+        src: ../templates/ios/EtherChannelTotalsFacts.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Totals.{{ item }}
+      loop:
+        - csv
+        - md    
+          
+# Create Mind Map # 
+    - name: create Core EtherChannel Totals Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Totals.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Totals.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true
+
+# Create CSV and Markdown Files #
+# Create Etherchannel CSV and Markdown files with EtherChannel results #
+    - name: Create CSV and Markdown for EtherChannel Summary
+      template: 
+        src: ../templates/ios/EtherChannelFacts.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Summary.{{ item }}
+      loop:
+        - csv
+        - md    
+          
+# Create Mind Map # 
+    - name: create Core EtherChannel Totals Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Summary.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_Etherchannel_Summary.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true      

@@ -1,0 +1,17 @@
+{% if item == "csv" %}
+Interface,Neighbor IP Address,MAC Address,Type,Origin,Age,Protocol
+{%     for interface in pyats_ip_arp.interfaces %}
+{%         for neighbor in pyats_ip_arp.interfaces[interface].ipv4.neighbors %}
+{{ interface }},{{ neighbor }},{{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].link_layer_address }},{{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].type }},{{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].origin }},{{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].age }},{{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].protocol }}
+{%         endfor %}
+{%     endfor %}
+{% else %}
+# Show IP ARP Facts for {{ inventory_hostname }} Global Routing Table
+| Interface | Neighbor IP Address | MAC Address | Type | Origin | Age | Protocol |
+| --------- | ------------------- | ----------- | ---- | ------ | --- | -------- |
+{%     for interface in pyats_ip_arp.interfaces %}
+{%         for neighbor in pyats_ip_arp.interfaces[interface].ipv4.neighbors %}
+| {{ interface }} | {{ neighbor }} | {{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].link_layer_address }} | {{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].type }} | {{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].origin }} | {{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].age }} | {{ pyats_ip_arp.interfaces[interface].ipv4.neighbors[neighbor].protocol }} |
+{%         endfor %}
+{%     endfor %}
+{% endif %}

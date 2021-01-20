@@ -1,0 +1,24 @@
+{
+    "mac_table": {
+        "vlans": {
+            "-": {
+                "mac_addresses": {
+                    "xxxx.xxxx.xxxx": {
+                        "entry": "",
+                        "interfaces": {
+                            "INT": {
+                                "age": "",
+                                "interface": "INT",
+                                "mac_type": ""
+                            }
+                        },
+                        "mac_address": "xxxx.xxxx.xxxx",
+                        "ntfy": "",
+                        "secure": ""
+                    }
+                },
+                "vlan": ""
+            }
+        }
+    }
+}

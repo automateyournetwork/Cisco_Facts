@@ -1,0 +1,21 @@
+{% if item == "csv" %}
+Area,Interface,Neighbor,Neighbor Address,State,Uptime
+{%     for area in pyats_ospf_neighbors_details.get('address-family').ipv4.areas %}
+{%         for interface in pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces %}
+{%             for neighbor in pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors %}
+{{ area }},{{ interface }},{{ neighbor }},{{ pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors[neighbor].address }},{{ pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors[neighbor].state }},{{ pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors[neighbor].uptime }}
+{%             endfor %}
+{%         endfor %}
+{%     endfor%}
+{% else %}
+# Cisco OSPF Neighbors for {{ inventory_hostname }}
+| Area | Interfaces | Neighbors | Neighbor Address | State | Uptime |
+| ---- | ---------- | --------- | ---------------- | ----- | ------ |
+{%     for area in pyats_ospf_neighbors_details.get('address-family').ipv4.areas %}
+{%         for interface in pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces %}
+{%             for neighbor in pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors %}
+| {{ area }} | {{ interface }} | {{ neighbor }} | {{ pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors[neighbor].address }} | {{ pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors[neighbor].state }} | {{ pyats_ospf_neighbors_details.get('address-family').ipv4.areas[area].interfaces[interface].neighbors[neighbor].uptime }} |
+{%             endfor %}
+{%         endfor %}
+{%     endfor%}
+{% endif %}

@@ -1,0 +1,70 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks:
+# Gather Ansible Facts About Distribution VRFs #
+    - name: show issu state detail
+      ios_command:
+        commands:
+          - show issu state detail
+      register: issu_state_raw
+
+# Genie parse command #
+    - name: Set Fact Genie Filter 
+      set_fact:
+        pyats_issu_state_raw: "{{ issu_state_raw['stdout'][0] | parse_genie(command='show issu state detail', os='ios') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_issu_state_raw | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_ISSU_State.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_issu_state_raw | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_ISSU_State.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_ISSU_State.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Create CSV and Markdown file with results #
+    - name: Create CSV and Markdown
+      template: 
+        src: ../templates/ios/ISSUFacts.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_ISSU_State.{{ item }}
+      loop:
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_ISSU_State.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_ISSU_State.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true         

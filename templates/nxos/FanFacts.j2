@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Model,Name,Status,Hardware Version
+{%     for fan in ansible_facts.net_fan_info %}
+{{ fan.model }},{{ fan.name }},{{ fan.status }},{{ fan.hw_ver }}
+{%     endfor %}
+{% else %}
+# Fans for {{ inventory_hostname }}
+| Model | Name | Status | Hardware Version |
+| ----- | ---- | ------ | ---------------- |
+{%     for fan in ansible_facts.net_fan_info %}
+| {{ fan.model }} | {{ fan.name }} | {{ fan.status }} | {{ fan.hw_ver }} |
+{%     endfor %}
+{% endif %}

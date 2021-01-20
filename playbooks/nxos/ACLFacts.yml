@@ -1,0 +1,69 @@
+---
+
+- hosts: DC
+# PRompt for Username and Password #
+  vars_prompt:
+    - name: NXOS_User_Prompt
+      prompt: "Enter Cisco NXOS Username"
+      private: no 
+    - name: NXOS_Password_Prompt
+      prompt: "Enter Cisco NXOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        nxos_user: "{{ NXOS_User_Prompt }}"     
+        nxos_password: "{{ NXOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true   
+  tasks:
+# Gather Ansible Facts About Core Access Lists #
+    - name: show access-lists
+      nxos_command:
+        commands:
+          - show access-lists
+      register: all_access_lists_raw
+
+# Genie Parse command #
+    - name: Set Fact Genie Filter 
+      set_fact:
+        pyats_all_access_lists: "{{ all_access_lists_raw['stdout'][0] | parse_genie(command='show access-lists', os='nxos') }}"
+
+# Create RAW JSON, Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_all_access_lists | to_nice_json }}
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/Show_ACL.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_all_access_lists | to_nice_yaml }}
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/Show_ACL.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/NXOS/{{ inventory_hostname }}/Show_ACL.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Create CSV and MD File #
+# Create MAC CSV and MD file with results #
+    - name: CSV and MD using Jinja templates
+      template:
+        src: ../templates/nxos/ACLFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/Show_ACL.{{ item }}
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create IP Access-List Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/Show_ACL.md -o ../FACTS/NXOS/{{ inventory_hostname }}/Show_ACL.html"
+      register: markmap  

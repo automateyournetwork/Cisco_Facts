@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Model,Number,Status,Output
+{%     for power_supply in ansible_facts.net_power_supply_info %}
+{{ power_supply.model }},{{ power_supply.number }},{{ power_supply.status }},{{ power_supply.actual_output }}
+{%     endfor %}
+{% else %}
+# Power Supplies for {{ inventory_hostname }}
+| Model | Name | Status | Output |
+| ----- | ---- | ------ | ------ |
+{%     for power_supply in ansible_facts.net_power_supply_info %}
+| {{ power_supply.model }} | {{ power_supply.number }} | {{ power_supply.status }} | {{ power_supply.actual_output }} |
+%     endfor %}
+{% endif %}

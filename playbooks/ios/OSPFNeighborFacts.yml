@@ -1,0 +1,70 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks:
+# Gather Ansible Facts About Distribution VRFs #
+    - name: show ip ospf neighbor detail
+      ios_command:
+        commands:
+          - show ip ospf neighbor detail
+      register: ospf_neighbors_details_raw
+
+    - name: Set Fact Genie Filter 
+      set_fact:
+        pyats_ospf_neighbors_details: "{{ ospf_neighbors_details_raw['stdout'][0] | parse_genie(command='show ip ospf neighbor detail__', os='ios') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_ospf_neighbors_details | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_OSPF_Neighbor_Detail.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_ospf_neighbors_details | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_OSPF_Neighbor_Detail.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_OSPF_Neighbor_Detail.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Create CSV and MD File #
+# Create MAC CSV and MD file with results #
+    - name: CSV and MD using Jinja templates
+      template:
+        src: ../templates/ios/OSPFNeighborFacts.j2
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_OSPF_Neighbor_Detail.{{ item }}
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_OSPF_Neighbor_Detail.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_OSPF_Neighbor_Detail.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true   

@@ -1,0 +1,17 @@
+{% if item == "csv" %}
+Interface,Neighbor,Port,Neighbor System Name
+{%     for neighbor in ansible_facts.net_neighbors %}
+{%         for detail in ansible_facts.net_neighbors[neighbor] %}
+{{ neighbor }},{{ detail.host }},{{ detail.port }},{{ detail.sysname }}
+{%         endfor %}
+{%     endfor %}
+{% else %}
+# Neighbors for {{ inventory_hostname }}
+| Interface | Neighbor | Port | Neighbor System Name |
+| --------- | -------- | ---- | -------------------- |
+{%     for neighbor in ansible_facts.net_neighbors %}
+{%         for detail in ansible_facts.net_neighbors[neighbor] %}
+| {{ neighbor }} | {{ detail.host }} | {{ detail.port }} | {{ detail.sysname }} |
+{%         endfor %}
+{%     endfor %}
+{% endif %}

@@ -1,0 +1,11 @@
+---
+interface:
+    GigabitEthernetx/x/x:
+        encapsulation: 
+        mode: ''
+        name: GigabitEthernetx/x/x
+        native_vlan: ''
+        status: 
+        vlans_allowed_active_in_mgmt_domain: ''
+        vlans_allowed_on_trunk: ''
+        vlans_in_stp_forwarding_not_pruned: ''

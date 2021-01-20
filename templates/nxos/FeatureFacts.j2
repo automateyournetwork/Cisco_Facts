@@ -1,0 +1,2 @@
+Enabled Features
+{{ ansible_facts['net_features_enabled'] | regex_replace(",","\n") | regex_replace("\['","") | regex_replace("\']","") | regex_replace("'","") | regex_replace(" ","") }}

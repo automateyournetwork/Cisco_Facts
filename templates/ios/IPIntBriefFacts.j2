@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Interface,IP Address,Status,Protocol,Method,Interface is OK
+{%    for interface in pyats_ip_int_br.interface %}
+{{ interface }},{{ pyats_ip_int_br.interface[interface].ip_address }},{{ pyats_ip_int_br.interface[interface].status }},{{ pyats_ip_int_br.interface[interface].protocol }},{{ pyats_ip_int_br.interface[interface].method }},{{ pyats_ip_int_br.interface[interface].interface_is_ok }}
+{%    endfor %}
+{% else %}
+# Show IP Interface Brief for {{ inventory_hostname }}
+| Interface | IP Address | Status | Protocol | Method | Interface is OK |
+| --------- | ---------- | ------ | -------- | ------ | --------------- |
+{%    for interface in pyats_ip_int_br.interface %}
+| {{ interface }} | {{ pyats_ip_int_br.interface[interface].ip_address }} | {{ pyats_ip_int_br.interface[interface].status }} | {{ pyats_ip_int_br.interface[interface].protocol }} | {{ pyats_ip_int_br.interface[interface].method }} | {{ pyats_ip_int_br.interface[interface].interface_is_ok }} |
+{%    endfor %}
+{% endif %}

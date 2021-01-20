@@ -1,0 +1,25 @@
+{% if item == "csv" %}
+VRF,Protocols,Interfaces
+{%    for vrf in pyats_all_vrfs.vrf %}
+{%        for key, value in pyats_all_vrfs.vrf[vrf].items() %}
+{%            for interface in value %}
+{%                if interface != "ipv4" %}
+{{ vrf }},{{ pyats_all_vrfs.vrf[vrf].protocols | regex_replace("\['","") | regex_replace("'\]","") }},{{ interface }}
+{%                endif %}
+{%            endfor %}
+{%        endfor %}
+{%    endfor %}
+{% else %}
+# VRF Facts for {{ inventory_hostname }}
+| VRF | Protocol | Interfaces |
+| --- | -------- | ---------- |
+{%    for vrf in pyats_all_vrfs.vrf %}
+{%        for key, value in pyats_all_vrfs.vrf[vrf].items() %}
+{%            for interface in value %}
+{%                if interface != "ipv4" %}
+| {{ vrf }} | {{ pyats_all_vrfs.vrf[vrf].protocols | regex_replace("\['","") | regex_replace("'\]","") }} | {{ interface }} |
+{%                endif %}
+{%            endfor %}
+{%        endfor %}
+{%    endfor %}
+{% endif %}

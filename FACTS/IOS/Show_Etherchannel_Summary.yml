@@ -1,0 +1,21 @@
+---
+interfaces:
+    Port-channel:
+        bundle_id:
+        flags:
+        members:
+            TenGigabitEthernetx/x/x:
+                bundled: 
+                flags: 
+                interface: TenGigabitEthernetx/x/x
+                port_channel:
+                    port_channel_int: Port-channel
+                    port_channel_member: 
+        name: Port-channel
+        oper_status: 
+        port_channel:
+            port_channel_member: true
+            port_channel_member_intfs:
+            - TenGigabitEthernetx/x/x
+number_of_aggregators: 
+number_of_lag_in_use:

@@ -1,0 +1,2 @@
+IP Addresses
+{{ ansible_facts['net_all_ipv4_addresses'] | regex_replace(",","\n") | regex_replace("\['","") | regex_replace("\']","") | regex_replace("'","") | regex_replace(" ","") }}

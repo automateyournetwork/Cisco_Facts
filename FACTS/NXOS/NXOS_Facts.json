@@ -1,0 +1,83 @@
+{
+    "discovered_interpreter_python":,
+    "net__hostname": "HOSTNAME",
+    "net__os": "",
+    "net__platform": "",
+    "net_all_ipv4_addresses": [],
+    "net_all_ipv6_addresses": [],
+    "net_api": "",
+    "net_config": "",
+    "net_fan_info": [
+        {
+            "hw_ver": "",
+            "model": "",
+            "name": "",
+            "status": ""
+        }
+    ],
+    "net_features_enabled": [],
+    "net_filesystems": [
+        "bootflash:"
+    ],
+    "net_gather_network_resources": [],
+    "net_gather_subset": [
+        "hardware",
+        "legacy",
+        "features",
+        "default",
+        "interfaces",
+        "config"
+    ],
+    "net_hostname": "HOSTNAME",
+    "net_image": "",
+    "net_interfaces": {
+        "Ethernetx/x": {
+            "bandwidth": ,
+            "description": "",
+            "duplex": "",
+            "macaddress": "",
+            "mode": "",
+            "mtu": "",
+            "speed": "",
+            "state": "",
+            "type": ""
+        }
+    },
+    "net_interfaces_list": [],
+    "net_license_hostid": "",
+    "net_memfree_mb": ,
+    "net_memtotal_mb": ,
+    "net_model": "",
+    "net_module": [
+        {
+            "model": "",
+            "ports": ,
+            "status": "",
+            "type": ""
+        }
+    ],
+    "net_neighbors": {
+        "Ethernetx/x": [
+            {
+                "host": "",
+                "port": "",
+                "sysname": ""
+            }
+        ]
+    },
+    "net_platform": "",
+    "net_power_supply_info": [
+        {
+            "actual_output": "",
+            "model": "",
+            "number": ,
+            "status": ""
+        }
+    ],
+    "net_python_version": "",
+    "net_serialnum": "",
+    "net_system": "",
+    "net_version": "",
+    "net_vlan_list": [],
+    "network_resources": {}
+}

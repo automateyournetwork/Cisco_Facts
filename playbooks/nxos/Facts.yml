@@ -1,0 +1,163 @@
+---
+
+- hosts: DC
+  vars_prompt:
+    - name: NXOS_User_Prompt
+      prompt: "Enter Cisco NXOS Username"
+      private: no 
+    - name: NXOS_Password_Prompt
+      prompt: "Enter Cisco NXOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        nxos_user: "{{ NXOS_User_Prompt }}"     
+        nxos_password: "{{ NXOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true   
+  tasks:
+# Gather Ansible Facts About Core #
+    - name: Gather Ansible Facts About DC Agg
+      nxos_facts:
+        gather_subset:
+          - all
+
+## GLOBAL NXOS FACTS SECTION ##
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ ansible_facts | to_nice_json }}
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Facts.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ ansible_facts | to_nice_yaml }}
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Facts.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Facts.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Create CSV and MD files with results #
+    - name: Create Global Facts CSV and MD
+      template:
+        src: ../templates/nxos//AggFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Facts.{{ item }}       
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create DC AGG Global Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Facts.md -o ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Facts.html"
+      register: markmap
+      delegate_to: localhost    
+
+## IP ADDRESS FACTS SECTION ##
+# Create CSV file with results #
+    - name: Create IP Address CSV
+      template:
+        src: ../templates/nxos//AggIPFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_IP_Facts.csv
+
+## FEATURE FACTS SECTION ##
+# Create CSV file with results #
+    - name: Create Features CSV
+      template:
+        src: ../templates/nxos//AggFeatureFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Feature_facts.csv
+
+## VLAN FACTS SECTION ##
+# Create CSV files with results #
+    - name: Create VLAN CSV
+      template:
+        src: ../templates/nxos//AggVLANFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_VLAN_Facts.csv    
+
+## Interface Facts Section ##
+# Create CSV and MD files with results #
+    - name: Create Interfaces CSV and MD
+      template:
+        src: ../templates/nxos//AggInterfaceFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Interface_Facts.{{ item }}       
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create DC AGG Interfaces Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Interface_Facts.md -o ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Interface_Facts.html"
+      register: markmap
+      delegate_to: localhost 
+
+# Neighbor section
+# Create CSV and MD files with results #
+    - name: Create Neighbor CSV and MD
+      template:
+        src: ../templates/nxos//AggNeighborFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Neighbor_Facts.{{ item }}       
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create DC AGG Neighbor Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Neighbor_Facts.md -o ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Neighbor_Facts.html"
+      register: markmap
+      delegate_to: localhost 
+
+## MODULE FACTS SECTION ##
+# Create CSV and MD files with results #
+    - name: Create Module CSV and MD
+      template:
+        src: ../templates/nxos//AggModuleFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Module_Facts.{{ item }}       
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create DC AGG Module Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Module_Facts.md -o ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Module_Facts.html"
+      register: markmap
+      delegate_to: localhost 
+
+## FAN FACTS SECTION ##
+# Create CSV and MD files with results #
+    - name: Create Fans CSV and MD
+      template:
+        src: ../templates/nxos//AggFanFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Fan_Facts.{{ item }}       
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create DC AGG Fans Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Fan_Facts.md -o ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_Fan_Facts.html"
+      register: markmap
+      delegate_to: localhost 
+
+## Power Supply FACTS SECTION ##
+# Create CSV and MD files with results #
+    - name: Create Power Supply CSV and MD
+      template:
+        src: ../templates/nxos//AggFanFacts.j2
+        dest: ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_PowerSupply_Facts.{{ item }}       
+      loop: 
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create DC AGG Power Supply Mind Map 
+      shell: "markmap --no-open ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_PowerSupply_Facts.md -o ../FACTS/NXOS/{{ inventory_hostname }}/NXOS_PowerSupply_Facts.html"
+      register: markmap
+      delegate_to: localhost          

@@ -1,0 +1,14 @@
+---
+mac_table:
+    vlans:
+        'x':
+            mac_addresses:
+                xxx.xxxx.xxxx:
+                    interfaces:
+                        Port-channelx:
+                            age: 
+                            entry_type: 
+                            interface: Port-channelx
+                            learn: ''
+                    mac_address: xxxx.xxxx.xxxx
+            vlan: x

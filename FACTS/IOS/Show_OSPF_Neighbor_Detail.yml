@@ -1,0 +1,31 @@
+---
+address-family:
+    ipv4:
+        areas:
+            x.x.x.x:
+                interfaces:
+                    Port-channelx:
+                        neighbors:
+                            y.y.y.y:
+                                address: x.x.x.x
+                                bdr_ip_addr: 
+                                dbd_options: ''
+                                dead_timer: 
+                                dr_ip_addr: 
+                                first: 
+                                hello_options: ''
+                                index: ,
+                                interface: Port-channelx
+                                neighbor_router_id: y.y.y.y
+                                next: 
+                                priority: 
+                                state: 
+                                statistics:
+                                    last_retrans_max_scan_length: 
+                                    last_retrans_max_scan_time_msec: 
+                                    last_retrans_scan_length: 
+                                    last_retrans_scan_time_msec: 
+                                    nbr_event_count: 
+                                    nbr_retrans_qlen: 
+                                    total_retransmission: 
+                                uptime: 

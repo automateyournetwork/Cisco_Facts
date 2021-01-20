@@ -1,0 +1,19 @@
+---
+global_static_table:
+    x.x.x.x:
+        age: ''
+        encap_type: 
+        ip_address: y.y.y.y
+        mac_address: 
+        protocol: 
+interfaces:
+    Port-channelx:
+        ipv4:
+            neighbors:
+                y.y.y.y:
+                    age: ''
+                    ip: 
+                    link_layer_address:
+                    origin: 
+                    protocol:
+                    type: 

@@ -1,0 +1,9 @@
+{% if item == "csv" %}
+Hostname,Image,Version,Serial Number,Model,Total Memory,Free Memory,License
+{{ inventory_hostname }},{{ ansible_facts['net_image'] }},{{ ansible_facts['net_version'] }},{{ ansible_facts['net_serialnum'] }},{{ ansible_facts['net_model'] }},{{ ansible_facts['net_memtotal_mb'] }},{{ ansible_facts['net_memfree_mb'] }},{{ ansible_facts['net_license_hostid'] }}
+{% else %}
+# Cisco NXOS Facts for {{ inventory_hostname }}
+| Hostname | Image | Version | Serial Number | Model | Total Memory | Free Memory | License |
+| -------- | ----- | ------- | ------------- | ----- | ------------ | ----------- | ------- |
+| {{ inventory_hostname }} | {{ ansible_facts['net_image'] }} | {{ ansible_facts['net_version'] }} | {{ ansible_facts['net_serialnum'] }} | {{ ansible_facts['net_model'] }} | {{ ansible_facts['net_memtotal_mb'] }} | {{ ansible_facts['net_memfree_mb'] }} | {{ ansible_facts['net_license_hostid'] }} |
+{% endif %}

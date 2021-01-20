@@ -1,0 +1,17 @@
+{% if item == "csv" %}
+VLAN,MAC Address,Interface,Age,Entry Type,Learn
+{%     for vlan in pyats_mac_table.mac_table.vlans %}
+{%         for mac in pyats_mac_table.mac_table.vlans[vlan].mac_addresses %}
+{{ vlan }},{{ mac }},{{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('interface') | first | default('') }},{{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('age') | first | default('') }},{{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('entry_type') | first | default('') }},{{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('learn') | first | default('') }}
+{%         endfor %}
+{%     endfor %}
+{% else %}
+# Cisco MAC Facts for {{ inventory_hostname }}
+| VLAN | MAC Address | Interface | Age | Entry Type | Learn |
+| ---- | ----------- | --------- | ----| ---------- | ----- |
+{%     for vlan in pyats_mac_table.mac_table.vlans %}
+{%         for mac in pyats_mac_table.mac_table.vlans[vlan].mac_addresses %}
+| {{ vlan }} | {{ mac }} | {{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('interface') | first | default('') }} | {{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('age') | first | default('') }} | {{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('entry_type') | first | default('') }} | {{ pyats_mac_table.mac_table.vlans[vlan].mac_addresses[mac].interfaces | getNestedValuesAsArray('learn') | first | default('') }} |
+{%         endfor %}
+{%     endfor %}
+{% endif %}

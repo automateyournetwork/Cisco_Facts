@@ -1,0 +1,70 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks:
+    # Gather Ansible Facts About Distribution VRFs #
+    - name: show ip interface brief
+      ios_command:
+        commands:
+          - show ip interface brief
+      register: ip_int_br_raw
+
+# Genie parse #
+    - name: Set Fact Genie Filter 
+      set_fact:
+        pyats_ip_int_br: "{{ ip_int_br_raw['stdout'][0] | parse_genie(command='show ip interface brief', os='ios') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_ip_int_br | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Int_Brief.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_ip_int_br | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Int_Brief.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Int_Brief.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Create CSV and Markdown file with results #
+    - name: Create CSV and Markdown
+      template: 
+        src: ../templates/ios/ShIPIntBriefFacts.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Int_Brief.{{ item }}
+      loop:
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Int_Brief.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Int_Brief.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true

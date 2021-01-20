@@ -1,0 +1,33 @@
+{% if item == "csv" %}
+VRF,Network,Next Hop,Active,Preference
+{%     for vrf in pyats_ip_static_route.vrf %}
+{%         for route in pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes %}
+{%             if pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list is defined %}
+{%                 for next_hop in pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list %}
+{{ vrf }},{{ route }},{{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list[next_hop].next_hop }},{{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list[next_hop].active }},{{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list[next_hop].preference }}
+{%                 endfor %}
+{%             else %}
+{%                 for next_hop in pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface %}
+{{ vrf }},{{ route }},{{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface[next_hop].outgoing_interface }},{{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface[next_hop].active }},{{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface[next_hop].preference }}
+{%                 endfor %}
+{%             endif %}
+{%         endfor %}
+{%     endfor %}
+{% else %}
+# Static Route Facts for {{ inventory_hostname }}
+| VRF | Network | Next Hop | Active | Preference |
+| --- | ------- | -------- | ------ | ---------- |
+{%     for vrf in pyats_ip_static_route.vrf %}
+{%         for route in pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes %}
+{%             if pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list is defined %}
+{%                 for next_hop in pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list %}
+| {{ vrf }} | {{ route }} | {{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list[next_hop].next_hop }} | {{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list[next_hop].active }} | {{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.next_hop_list[next_hop].preference }} |
+{%                 endfor %}
+{%             else %}
+{%                 for next_hop in pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface %}
+| {{ vrf }} | {{ route }} | {{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface[next_hop].outgoing_interface }} | {{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface[next_hop].active }} | {{ pyats_ip_static_route.vrf[vrf].address_family.ipv4.routes[route].next_hop.outgoing_interface[next_hop].preference }} |
+{%                 endfor %}
+{%             endif %}
+{%         endfor %}
+{%     endfor %}
+{% endif %}

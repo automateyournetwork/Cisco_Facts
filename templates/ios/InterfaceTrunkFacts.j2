@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Interface,Encapsulation,Mode,Native Vlan,Status,Allowed on Trunk,STP Forwarding
+{%     for interface in pyats_all_interfaces_trunk.interface %}
+{{ interface }},{{ pyats_all_interfaces_trunk.interface[interface].encapsulation }},{{ pyats_all_interfaces_trunk.interface[interface].mode }},{{ pyats_all_interfaces_trunk.interface[interface].native_vlan }},{{ pyats_all_interfaces_trunk.interface[interface].status }},{{ pyats_all_interfaces_trunk.interface[interface].vlans_allowed_on_trunk | regex_replace(","," ") }},{{ pyats_all_interfaces_trunk.interface[interface].vlans_in_stp_forwarding_not_pruned | regex_replace(","," ") }}
+{%     endfor %}
+{% else %}
+# Interface Trunk Facts for {{ inventory_hostname }}
+| Interface | Encapsulation | Mode | Native Vlan | Status | Allowed on Trunk | STP Forwarding |
+| --------- | ------------- | ---- | ----------- | ------ | ---------------- | -------------- |
+{%     for interface in pyats_all_interfaces_trunk.interface %}
+| {{ interface }} | {{ pyats_all_interfaces_trunk.interface[interface].encapsulation }} | {{ pyats_all_interfaces_trunk.interface[interface].mode }} | {{ pyats_all_interfaces_trunk.interface[interface].native_vlan }} | {{ pyats_all_interfaces_trunk.interface[interface].status }} | {{ pyats_all_interfaces_trunk.interface[interface].vlans_allowed_on_trunk }} | {{ pyats_all_interfaces_trunk.interface[interface].vlans_in_stp_forwarding_not_pruned }} |
+{%     endfor %}
+{% endif %}

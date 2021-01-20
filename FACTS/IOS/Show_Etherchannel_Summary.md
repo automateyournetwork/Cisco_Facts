@@ -1,0 +1,3 @@
+# Etherchannel Summary for HOSTNAME
+| Port-Channel | Bundle ID | Name | Status | Protocol | Flags | Member01 | Member02 | Member03 | Member04 | Member05 | Member06 | Member07 | Member08 |
+| ------------ | --------- | ---- | ------ | -------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |

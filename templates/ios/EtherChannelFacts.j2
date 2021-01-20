@@ -1,0 +1,14 @@
+{% if item == "csv" %}
+Port-Channel,Bundle ID,Name,Status,Protocol,Flags,Member01,Member02,Member03,Member04,Member05,Member06,Member07,Member08
+{%     for interface in pyats_etherchannel_summary.interfaces %}
+{{ interface }},{{ pyats_etherchannel_summary.interfaces[interface].bundle_id }},{{ pyats_etherchannel_summary.interfaces[interface].name }},{{ pyats_etherchannel_summary.interfaces[interface].oper_status }},{% if pyats_etherchannel_summary.interfaces[interface].protocol is defined %}{{ pyats_etherchannel_summary.interfaces[interface].protocol }}{% else %}Mode On{% endif %},{{ pyats_etherchannel_summary.interfaces[interface].flags }},{% if pyats_etherchannel_summary.interfaces[interface].port_channel.port_channel_member_intfs is defined %}{{ pyats_etherchannel_summary.interfaces[interface].port_channel.port_channel_member_intfs | regex_replace("\[","") | regex_replace("\]","") | regex_replace("'","") }}{% else %}No Members{% endif %}
+
+{%     endfor %}
+{% else %}
+# Etherchannel Summary for {{ inventory_hostname }}
+| Port-Channel | Bundle ID | Name | Status | Protocol | Flags | Member01 | Member02 | Member03 | Member04 | Member05 | Member06 | Member07 | Member08 |
+| ------------ | --------- | ---- | ------ | -------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+{%     for interface in pyats_etherchannel_summary.interfaces %}
+| {{ interface }} | {{ pyats_etherchannel_summary.interfaces[interface].bundle_id }} | {{ pyats_etherchannel_summary.interfaces[interface].name }} | {{ pyats_etherchannel_summary.interfaces[interface].oper_status }} | {% if pyats_etherchannel_summary.interfaces[interface].protocol is defined %}{{ pyats_etherchannel_summary.interfaces[interface].protocol }}{% else %}Mode On{% endif %} | {{ pyats_etherchannel_summary.interfaces[interface].flags }} | {% if pyats_etherchannel_summary.interfaces[interface].port_channel.port_channel_member_intfs is defined %}{{ pyats_etherchannel_summary.interfaces[interface].port_channel.port_channel_member_intfs | regex_replace("\[","") | regex_replace("\]","") | regex_replace("'","") | regex_replace(","," | ") }}{% else %}No Members{% endif %} |
+{%     endfor %}
+{% endif %}

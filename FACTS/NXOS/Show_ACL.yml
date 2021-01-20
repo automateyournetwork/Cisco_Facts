@@ -1,0 +1,17 @@
+---
+ACL:
+    aces:
+        'X':
+            actions:
+                forwarding: 
+            matches:
+                l3:
+                    ipv4:
+                        destination_network:
+                            x.x.x.x/x:
+                                destination_network: x.x.x.x/x
+                        protocol: 
+                        source_network:
+                            y.y.y.y/y:
+                                source_network: y.y.y.y/y
+            name: 'X'

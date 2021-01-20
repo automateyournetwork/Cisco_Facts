@@ -1,0 +1,28 @@
+{
+    "interfaces": {
+        "": {
+            "bundle_id": ,
+            "flags": "",
+            "members": {
+                "TenGigabitEthernetx/x/x": {
+                    "bundled": ,
+                    "flags": "",
+                    "interface": "",
+                    "port_channel": {
+                        "port_channel_int": "",
+                        "port_channel_member": 
+                    }
+                }
+            },
+            "name": "",
+            "oper_status": "",
+            "port_channel": {
+                "port_channel_member": ,
+                "port_channel_member_intfs": [
+                    "TenGigabitEthernetx/x/x",
+                ]
+            }
+        },
+    "number_of_aggregators": ,
+    "number_of_lag_in_use": 
+}

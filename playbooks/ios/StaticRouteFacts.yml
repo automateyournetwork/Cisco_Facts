@@ -1,0 +1,70 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks:
+# Run Show IP ARP and register results #
+    - name: show ip static route
+      ios_command:
+        commands:
+          - show ip static route
+      register: ip_static_route_raw
+
+# Parse Command #
+    - name: Set Fact Genie Filter - show ip static route
+      set_fact:
+        pyats_ip_static_route: "{{ ip_static_route_raw['stdout'][0] | parse_genie(command='show ip static route', os='ios') }}"
+
+# Create Nice JSON, Nice YAML Files #
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ pyats_ip_static_route | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Static_Route.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ pyats_ip_static_route | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Static_Route.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Static_Route.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost    
+
+# Create CSV and Markdown file with results #
+    - name: Create CSV and Markdown show ip static route 
+      template: 
+        src: ../templates/ios/StaticRouteFacts.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Static_Route.{{ item }}
+      loop:
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Static_Route.md -o ../FACTS/IOS/{{ inventory_hostname }}/Show_IP_Static_Route.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true   

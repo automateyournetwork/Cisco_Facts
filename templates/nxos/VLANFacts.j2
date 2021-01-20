@@ -1,0 +1,2 @@
+VLANs
+{{ ansible_facts['net_vlan_list'] | regex_replace(",","\n") | regex_replace("\['","") | regex_replace("\']","") | regex_replace("'","") | regex_replace(" ","") }}

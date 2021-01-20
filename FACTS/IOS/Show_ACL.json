@@ -1,0 +1,25 @@
+{
+    "": {
+        "aces": {
+            "": {
+                "actions": {
+                    "forwarding": ""
+                },
+                "matches": {
+                    "l3": {
+                        "ipv4": {
+                            "protocol": "ipv4",
+                            "source_network": {
+                                "": {
+                                    "source_network": ""
+                                }
+                            }
+                        }
+                    }
+                },
+                "name": "",
+                "statistics": {
+                    "matched_packets": ""
+                }
+            }
+}

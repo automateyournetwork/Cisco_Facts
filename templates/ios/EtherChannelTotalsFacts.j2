@@ -1,0 +1,9 @@
+{% if item == "csv" %}
+Number of Aggregators,Number of LAG in use
+{{ pyats_etherchannel_summary.number_of_aggregators }},{{ pyats_etherchannel_summary.number_of_lag_in_use }}
+{% else %}
+# Etherchannel Totals for {{ inventory_hostname }}
+| Number of Aggregators | Number of LAG in use |
+| --------------------- | -------------------- |
+| {{ pyats_etherchannel_summary.number_of_aggregators }} | {{ pyats_etherchannel_summary.number_of_lag_in_use }} |
+{% endif %}

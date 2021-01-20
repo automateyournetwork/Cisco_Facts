@@ -1,0 +1,14 @@
+---
+slot:
+    R1:
+        boot_variable: 
+        issu_state: 
+        operating_mode: 
+        rp_state: 
+        running_image: 
+    R2:
+        boot_variable: 
+        issu_state: 
+        operating_mode: 
+        rp_state: 
+        running_image:

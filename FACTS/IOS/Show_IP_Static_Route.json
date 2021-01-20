@@ -1,0 +1,25 @@
+{
+    "vrf": {
+        "default": {
+            "address_family": {
+                "ipv4": {
+                    "routes": {
+                        "x.x.x.x/x": {
+                            "next_hop": {
+                                "next_hop_list": {
+                                    "x": {
+                                        "active": ,
+                                        "index": x,
+                                        "next_hop": "y.y.y.y",
+                                        "preference": 
+                                    }
+                                }
+                            },
+                            "route": "x.x.x.x/x"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

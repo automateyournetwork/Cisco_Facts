@@ -1,0 +1,9 @@
+{% if item == "csv" %}
+Hostname,Image,Version,Serial Number,Model,Total Disk,Free Disk,Total Memory,Free Memory
+{{ inventory_hostname }},{{ image }},{{ version }},{{ serial }},{{ model }},{{ disk_total }},{{ disk_free }},{{ mem_total }},{{ mem_free }}
+{% else %}
+# Cisco IOS Facts for {{ inventory_hostname }}
+| Hostname | Image | Version | Serial Number | Model | Total Disk | Free Disk | Total Memory | Free Memory |
+| -------- | ----- | ------- | ------------- | ----- | ---------- | --------- | ------------ | ----------- |
+| {{ inventory_hostname }} | {{ image }} | {{ version }} | {{ serial }} | {{ model }} | {{ disk_total }} | {{ disk_free }} | {{ mem_total }} | {{ mem_free }} |
+{% endif %}

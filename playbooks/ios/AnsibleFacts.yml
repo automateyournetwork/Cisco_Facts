@@ -1,0 +1,113 @@
+---
+
+- hosts: Campus
+# Prompt for Username and Password #
+  vars_prompt:
+    - name: IOS_User_Prompt
+      prompt: "Enter Cisco IOS Username"
+      private: no 
+    - name: IOS_Password_Prompt
+      prompt: "Enter IOS Password"
+      private: yes      
+  tasks:
+# Register Username and Password #
+    - set_fact:   
+        ios_user: "{{ IOS_User_Prompt }}"     
+        ios_password: "{{ IOS_Password_Prompt }}"
+      no_log: true
+      delegate_to: localhost
+      run_once: true  
+  tasks:
+# Gather Ansible Facts About Core #
+    - name: Gather Ansible Facts About Core
+      ios_facts:
+        gather_subset:
+          - all
+
+## GLOBAL IOS FACTS SECTION ##
+# Create JSON file with Ansible Facts #
+    - name: Create raw JSON file
+      copy: 
+        content: | 
+          {{ ansible_facts | to_nice_json }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/IOS_Facts.json
+
+# Create YAML file with Ansible Facts #
+    - name: Create raw YAML
+      copy: 
+        content: | 
+          {{ ansible_facts | to_nice_yaml }}
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/IOS_Facts.yml
+
+# Add Headers to YAML #
+    - name: Header Row
+      lineinfile:
+        path: ../FACTS/IOS/{{ inventory_hostname }}/IOS_Facts.yml
+        insertbefore: BOF
+        line: ---        
+      delegate_to: localhost
+
+# Set Facts #
+    - set_fact:
+        image: "{{ ansible_facts['net_image'] }}"
+        version: "{{ ansible_facts['net_version'] }}"
+        serial: "{{ ansible_facts['net_serialnum'] }}"
+        model: "{{ ansible_facts['net_model'] }}"
+        ip_addresses: "{{ ansible_facts['net_all_ipv4_addresses'] }}"
+        disk_total: "{{ ansible_facts | json_query('net_filesystems_info.bootdisk.spacetotal_kb') }}"
+        disk_free: "{{ ansible_facts | json_query('net_filesystems_info.bootdisk.spacefree_kb') }}"
+        mem_total: "{{ ansible_facts['net_memtotal_mb'] }}"
+        mem_free: "{{ ansible_facts['net_memfree_mb'] }}"
+
+# Create CSV and Markdown file with results #
+    - name: Create CSV and Markdown
+      template: 
+        src: ../templates/ios/Facts.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/IOS_facts.{{ item }}
+      loop:
+        - csv
+        - md
+
+# Create Mind Map # 
+    - name: create Core Facts Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/IOS_facts.md -o ../FACTS/IOS/{{ inventory_hostname }}/IOS_facts.html"
+      register: markmap
+      delegate_to: localhost
+      run_once: true
+
+## IP ADDRESS FACTS SECTION ##
+# Create CSV file with IP results #
+    - name: Create IP CSV and Markdown
+      template: 
+        src: ../templates/ios/Facts_IP.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/IP_facts.csv
+
+## Interface Facts Section ##
+# Create CSV and Markdown file with Interfaces results #
+    - name: Create Interface CSV and Markdown
+      template: 
+        src: ../templates/ios/Facts_Interfaces.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Interface_facts.{{ item }}
+      loop:
+        - csv
+        - md
+          
+# Create Mind Map # 
+    - name: create Core Interface Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Interface_facts.md -o ../FACTS/IOS/{{ inventory_hostname }}/Interface_facts.html"
+      register: markmap
+
+## Neighbor Facts Section ##
+# Create CSV and Markdown file with Neighbor results #
+    - name: Create Neighbor CSV and Markdown
+      template: 
+        src: ../templates/ios/Facts_Neighbors.j2          
+        dest: ../FACTS/IOS/{{ inventory_hostname }}/Neighbor_facts.{{ item }}
+      loop:
+        - csv
+        - md  
+        
+# Create Mind Map # 
+    - name: create Core Neighbor Mind Map 
+      shell: "markmap --no-open ../FACTS/IOS/{{ inventory_hostname }}/Neighbor_facts.md -o ../FACTS/IOS/{{ inventory_hostname }}/Neighbor_facts.html"
+      register: markmap      

@@ -1,0 +1,13 @@
+{
+    "vrf": {
+        "X": {
+            "interfaces": [
+                "Port-channelx",              
+                "Vlanx"
+            ],
+            "protocols": [
+                "ipv4"
+            ]
+        }
+    }
+}

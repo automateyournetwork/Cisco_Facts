@@ -1,0 +1,13 @@
+{% if item == "csv" %}
+Slot,State,Operating Mode,RP State
+{%     for slot in pyats_issu_state_raw.slot %}
+{{ slot }},{{ pyats_issu_state_raw.slot[slot].issu_state }},{{ pyats_issu_state_raw.slot[slot].operating_mode }},{{ pyats_issu_state_raw.slot[slot].rp_state }}
+{%     endfor %}
+{% else %}
+# ISSU Facts for {{ inventory_hostname }}
+| Slot | State | Operating Mode | RP State |
+| ---- | ----- | -------------- | -------- |
+{%     for slot in pyats_issu_state_raw.slot %}
+| {{ slot }} | {{ pyats_issu_state_raw.slot[slot].issu_state }} | {{ pyats_issu_state_raw.slot[slot].operating_mode }} | {{ pyats_issu_state_raw.slot[slot].rp_state }} |
+{%     endfor %}
+{% endif %}
