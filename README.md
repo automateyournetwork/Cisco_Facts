@@ -13,7 +13,7 @@ pip install --user ansible
 
 2) Check version of Ansible
 ```console
- ansible --version
+ansible --version
 
 ansible 2.9.1
 ```
