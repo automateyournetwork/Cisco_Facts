@@ -6,6 +6,8 @@
 
 Ansible has several "Facts" modules - ios_facts and nxos_facts - that capture data and transform it into JavaScript Object Notation (JSON) which we then use Jinja2 Templates to transform again into business-ready documentation
 
+Cisco also has release Genie parsers - combined with Ansible you can first run an IOS / NXOS show command, then with Genie, parse that command into JSON. Once you have the JSON you can transform it with Jinja2 into CSV / MD! 
+
 ### Prerequisites
 
 1) Install Ansible
