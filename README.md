@@ -1,5 +1,7 @@
 # Cisco Facts and Genie Parsed Commands to Business-Ready Documentation Ansible Playbooks
 
+[![published](https://static.production.devnetcloud.com/codeexchange/assets/images/devnet-published.svg)](https://developer.cisco.com/codeexchange/github/repo/automateyournetwork/Cisco_Facts)
+
 ## Written by John Capobianco
 
 Ansible has several "Facts" modules - ios_facts and nxos_facts - that capture data and transform it into JavaScript Object Notation (JSON) which we then use Jinja2 Templates to transform again into business-ready documentation
